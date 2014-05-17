@@ -10,7 +10,8 @@ The images were made using the script [build-all.sh](build-all.sh).
 ## Usage
 
 Just use `FROM mazzolino/armhf-ubuntu:<VERSION>` in your Dockerfile to
-use pre-built images from the Docker index. I will update the images
+use [pre-built images from the Docker
+index](https://index.docker.io/u/mazzolino/armhf-ubuntu/). I will update the images
 regularly (I promise).
 
 Alternatively, you can build and push your own images, as described in
