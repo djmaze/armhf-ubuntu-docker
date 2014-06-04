@@ -30,10 +30,10 @@ curl $BASE_IMAGE_URL | gunzip -c >/tmp/${ARCHIVE_NAME}
 
 # Keep us lean by effectively running "apt-get clean" after every install
 aptGetClean='"rm -f /var/cache/apt/archives/*.deb /var/cache/apt/archives/partial/*.deb /var/cache/apt/*.bin || true";'
-dockerCleanPath=etc/apt/apt.conf.d
-mkdir -p /tmp/$dockerCleanPath
-echo >&2 "+ cat > '/tmp/$dockerCleanPath/docker-clean'"
-cat > "/tmp/$dockerCleanPath/docker-clean" <<-EOF
+aptConfPath=etc/apt/apt.conf.d
+mkdir -p /tmp/$aptConfPath
+echo >&2 "+ cat > '/tmp/$aptConfPath/docker-clean'"
+cat > "/tmp/$aptConfPath/docker-clean" <<-EOF
   DPkg::Post-Invoke { ${aptGetClean} };
   APT::Update::Post-Invoke { ${aptGetClean} };
 
@@ -41,10 +41,14 @@ cat > "/tmp/$dockerCleanPath/docker-clean" <<-EOF
   Dir::Cache::srcpkgcache "";
 EOF
 
+# Remove apt-cache translations for fast "apt-get update"
+echo >&2 "+ cat > '/tmp/$aptConfPath/docker-no-languages'"
+echo 'Acquire::Languages "none";' > "/tmp/$aptConfPath/docker-no-languages"
+
 # Add files to base image and import it
-cd /tmp && tar rf /tmp/${ARCHIVE_NAME} -P /usr/bin/qemu-arm-static $dockerCleanPath/docker-clean
+cd /tmp && tar rf /tmp/${ARCHIVE_NAME} -P /usr/bin/qemu-arm-static $aptConfPath
 cat /tmp/${ARCHIVE_NAME} | sudo docker import - $IMAGE_NAME
-rm /tmp/${ARCHIVE_NAME} /tmp/$dockerCleanPath -fR
+rm /tmp/${ARCHIVE_NAME} /tmp/$aptConfPath -fR
 
 # Use qemu unless running on armv7l architecture
 if [ $(uname -m) != "armv7l" -a ! -f /proc/sys/fs/binfmt_misc/arm ]; then
