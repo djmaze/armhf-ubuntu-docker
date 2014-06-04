@@ -25,11 +25,26 @@ fi
 
 echo Building $IMAGE_NAME
 
-# Import Ubuntu core image
+# Unzip Ubuntu core image
 curl $BASE_IMAGE_URL | gunzip -c >/tmp/${ARCHIVE_NAME}
-tar rf /tmp/${ARCHIVE_NAME} -P /usr/bin/qemu-arm-static
+
+# Keep us lean by effectively running "apt-get clean" after every install
+aptGetClean='"rm -f /var/cache/apt/archives/*.deb /var/cache/apt/archives/partial/*.deb /var/cache/apt/*.bin || true";'
+dockerCleanPath=etc/apt/apt.conf.d
+mkdir -p /tmp/$dockerCleanPath
+echo >&2 "+ cat > '/tmp/$dockerCleanPath/docker-clean'"
+cat > "/tmp/$dockerCleanPath/docker-clean" <<-EOF
+  DPkg::Post-Invoke { ${aptGetClean} };
+  APT::Update::Post-Invoke { ${aptGetClean} };
+
+  Dir::Cache::pkgcache "";
+  Dir::Cache::srcpkgcache "";
+EOF
+
+# Add files to base image and import it
+cd /tmp && tar rf /tmp/${ARCHIVE_NAME} -P /usr/bin/qemu-arm-static $dockerCleanPath/docker-clean
 cat /tmp/${ARCHIVE_NAME} | sudo docker import - $IMAGE_NAME
-rm /tmp/${ARCHIVE_NAME}
+rm /tmp/${ARCHIVE_NAME} /tmp/$dockerCleanPath -fR
 
 # Use qemu unless running on armv7l architecture
 if [ $(uname -m) != "armv7l" -a ! -f /proc/sys/fs/binfmt_misc/arm ]; then
@@ -39,7 +54,7 @@ fi
 # Update packages
 UPDATE_SCRIPT="dpkg-divert --local --rename --add /sbin/initctl && \
                ln -s /bin/true /sbin/initctl && \
-               export DEBIAN_FRONTEND=noninteractive; apt-get update && apt-get -y upgrade && apt-get clean"
+               export DEBIAN_FRONTEND=noninteractive; apt-get update && apt-get -y upgrade"
 CID=`sudo docker run -d $IMAGE_NAME sh -c "$UPDATE_SCRIPT"`
 sudo docker attach $CID
 sudo docker commit $CID $IMAGE_NAME
