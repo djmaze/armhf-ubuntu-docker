@@ -6,7 +6,6 @@
 # The following distributions will be built:
 # * 14.04, trusty
 # * 13.10, saucy
-# * 13.04, raring
 # * 12.04, precise
 #
 # Synopsis: build-all.sh [IMAGE NAME]
@@ -36,11 +35,6 @@ sudo docker push $IMAGE_NAME:trusty
 sudo docker push $IMAGE_NAME:13.10
 sudo docker tag $IMAGE_NAME:13.10 $IMAGE_NAME:saucy
 sudo docker push $IMAGE_NAME:saucy
-
-./build.sh 13.04
-sudo docker push $IMAGE_NAME:13.04
-sudo docker tag $IMAGE_NAME:13.04 $IMAGE_NAME:raring
-sudo docker push $IMAGE_NAME:raring
 
 ./build.sh 12.04.4
 sudo docker tag $IMAGE_NAME:12.04.4 $IMAGE_NAME:12.04

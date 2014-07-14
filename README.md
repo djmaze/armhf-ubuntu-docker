@@ -2,7 +2,6 @@ These are the Ubuntu Core images as [downloadable from Ubuntu][1]. See the [Ubun
 
 * 14.04, trusty
 * 13.10, saucy
-* 13.04, raring
 * 12.04, precise
 
 The images were made using the script [build-all.sh](build-all.sh).
@@ -50,9 +49,6 @@ Tip: On your arm device, additionally tag the images as **ubuntu** in order to b
 
     docker tag mazzolino/armhf-ubuntu:13.10 ubuntu:13.10
     docker tag mazzolino/armhf-ubuntu:13.10 ubuntu:saucy
-
-    docker tag mazzolino/armhf-ubuntu:13.04 ubuntu:13.04
-    docker tag mazzolino/armhf-ubuntu:13.04 ubuntu:raring
 
     docker tag mazzolino/armhf-ubuntu:12.04 ubuntu:12.04
     docker tag mazzolino/armhf-ubuntu:12.04 ubuntu:precise
