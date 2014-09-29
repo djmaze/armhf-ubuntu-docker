@@ -68,6 +68,7 @@ fi
 # Update packages
 UPDATE_SCRIPT="dpkg-divert --local --rename --add /sbin/initctl && \
                ln -s /bin/true /sbin/initctl && \
+               sed -i -e 's/# \(.*universe\)$/\1/' /etc/apt/sources.list && \
                export DEBIAN_FRONTEND=noninteractive; apt-get update && apt-get -y upgrade"
 CID=`sudo docker run -d $IMAGE_NAME sh -c "$UPDATE_SCRIPT"`
 sudo docker attach $CID
