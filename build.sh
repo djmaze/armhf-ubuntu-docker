@@ -15,6 +15,13 @@ VERSION=${1:-14.04}
 ARCHIVE_NAME=ubuntu-core-$VERSION-core-armhf.tar
 BASE_IMAGE_URL=http://cdimage.ubuntu.com/ubuntu-core/releases/$VERSION/release/${ARCHIVE_NAME}.gz
 
+# Check if running on armv7l architecture
+if [ $(uname -m) = "armv7l" ]; then
+  ON_ARM=1
+fi
+
+echo ARM: $ON_ARM
+
 # Use given image name or the default one (with your username)
 if [ -n "$2" ]; then
   IMAGE_NAME=$2:$VERSION
@@ -46,12 +53,15 @@ echo >&2 "+ cat > '/tmp/$aptConfPath/docker-no-languages'"
 echo 'Acquire::Languages "none";' > "/tmp/$aptConfPath/docker-no-languages"
 
 # Add files to base image and import it
-cd /tmp && tar rf /tmp/${ARCHIVE_NAME} -P /usr/bin/qemu-arm-static $aptConfPath
+cd /tmp && tar rf /tmp/${ARCHIVE_NAME} -P $aptConfPath
+if [ ! $ON_ARM ]; then
+  tar rf /tmp/${ARCHIVE_NAME} -P /usr/bin/qemu-arm-static
+fi
 cat /tmp/${ARCHIVE_NAME} | sudo docker import - $IMAGE_NAME
 rm /tmp/${ARCHIVE_NAME} /tmp/$aptConfPath -fR
 
 # Use qemu unless running on armv7l architecture
-if [ $(uname -m) != "armv7l" -a ! -f /proc/sys/fs/binfmt_misc/arm ]; then
+if [ ! $ON_ARM -a ! -f /proc/sys/fs/binfmt_misc/arm ]; then
   sudo sh -c 'echo ":arm:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x28\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/usr/bin/qemu-arm-static:" >/proc/sys/fs/binfmt_misc/register'
 fi
 
