@@ -26,7 +26,7 @@ echo ARM: $ON_ARM
 if [ -n "$2" ]; then
   IMAGE_NAME=$2:$VERSION
 else
-  DOCKER_USER=$(sudo -E docker info | grep Username | awk '{print $2;}')
+  DOCKER_USER=$(sudo docker info | grep Username | awk '{print $2;}')
   IMAGE_NAME=$DOCKER_USER/armhf-ubuntu:$VERSION
 fi
 
