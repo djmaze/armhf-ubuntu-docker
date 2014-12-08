@@ -66,8 +66,10 @@ if [ ! $ON_ARM -a ! -f /proc/sys/fs/binfmt_misc/arm ]; then
 fi
 
 # Update packages
+# FIXME Replace udev hold as soon as it does correctly upgrade on qemu
 UPDATE_SCRIPT="dpkg-divert --local --rename --add /sbin/initctl && \
                ln -s /bin/true /sbin/initctl && \
+               echo 'udev hold' | dpkg --set-selections && \
                sed -i -e 's/# \(.*universe\)$/\1/' /etc/apt/sources.list && \
                export DEBIAN_FRONTEND=noninteractive; apt-get update && apt-get -y upgrade"
 CID=`sudo docker run -d $IMAGE_NAME sh -c "$UPDATE_SCRIPT"`
