@@ -43,15 +43,15 @@ The image includes the amd64 version of `qemu-arm-static`. This means you can bu
 
 Tip: On your arm device, additionally tag the images as **ubuntu** in order to be able to build Dockerfiles which use the ubuntu base image:
 
-    docker tag mazzolino/armhf-ubuntu:14.04 ubuntu:14.04
-    docker tag mazzolino/armhf-ubuntu:14.04 ubuntu:latest
-    docker tag mazzolino/armhf-ubuntu:14.04 ubuntu:trusty
+    docker tag -f mazzolino/armhf-ubuntu:14.04 ubuntu:14.04
+    docker tag -f mazzolino/armhf-ubuntu:14.04 ubuntu:latest
+    docker tag -f mazzolino/armhf-ubuntu:14.04 ubuntu:trusty
 
-    docker tag mazzolino/armhf-ubuntu:13.10 ubuntu:13.10
-    docker tag mazzolino/armhf-ubuntu:13.10 ubuntu:saucy
+    docker tag -f mazzolino/armhf-ubuntu:13.10 ubuntu:13.10
+    docker tag -f mazzolino/armhf-ubuntu:13.10 ubuntu:saucy
 
-    docker tag mazzolino/armhf-ubuntu:12.04 ubuntu:12.04
-    docker tag mazzolino/armhf-ubuntu:12.04 ubuntu:precise
+    docker tag -f mazzolino/armhf-ubuntu:12.04 ubuntu:12.04
+    docker tag -f mazzolino/armhf-ubuntu:12.04 ubuntu:precise
 
     # Maybe also the stackbrew images
     docker tag mazzolino/armhf-ubuntu:12.04 stackbrew/ubuntu:12.04
