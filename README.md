@@ -35,7 +35,7 @@ Images will automatically pushed as `<YOUR-DOCKER-USER>/armhf-docker`.
 
 ## Emulation support ##
 
-The image includes the amd64 version of `qemu-arm-static`. This means you can build and run ARM containers on your 64bit machine, as explained in [this post][3]. On your host, you need to install [qemu-user-static][4]. Also, the following command must be executed before building or running any ARM containers (the build script does this automatically):
+The image includes the amd64 version of `qemu-arm-static`. This means you can build and run ARM containers on your 64bit machine, as explained in [this post][3]. The following command must be executed before building or running any ARM containers (the build script does this automatically):
 
     sudo sh -c 'echo ":arm:M::\x7fELF\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x28\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/usr/bin/qemu-arm-static:" >/proc/sys/fs/binfmt_misc/register'
 
@@ -62,4 +62,3 @@ Look at the [official Ubuntu image description](https://index.docker.io/_/ubuntu
   [1]: http://cdimage.ubuntu.com/ubuntu-core/releases/
   [2]: https://wiki.ubuntu.com/Core
   [3]: https://groups.google.com/forum/#!msg/coreos-dev/YC-G_rVFnI4/ncS5bjxYWdc
-  [4]: https://wiki.debian.org/QemuUserEmulation
